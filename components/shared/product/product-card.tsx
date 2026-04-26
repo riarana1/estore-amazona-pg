@@ -1,10 +1,11 @@
+import { Product } from "@/types"
+
 import Image from "next/image"
 import Link from "next/link"
 
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const ProductCard = ({ product }: { product: any }) => {
+const ProductCard = ({ product }: { product: Product }) => {
   return (
     <Card className="w-full max-w-sm">
       <CardHeader className="items-center p-0">

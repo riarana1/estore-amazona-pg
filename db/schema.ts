@@ -10,7 +10,7 @@ import {
 } from "drizzle-orm/pg-core"
 
 // PRODUCTS
-export const products = pgTable(
+export const Products = pgTable(
   "product",
   {
     id: uuid("id").defaultRandom().primaryKey().notNull(),

@@ -1,4 +1,4 @@
-import { CartItem } from "@/types"
+import { CartItem, ShippingAddress } from "@/types"
 import {
   boolean,
   integer,
@@ -46,6 +46,7 @@ export const users = pgTable("user", {
   email: text("email").notNull(),
   emailVerified: timestamp("emailVerified", { mode: "date" }),
   image: text("image"),
+  address: json("address").$type<ShippingAddress>(),
 })
 
 export const accounts = pgTable(
@@ -104,4 +105,5 @@ export const carts = pgTable("cart", {
   taxPrice: numeric("taxPrice", { precision: 12, scale: 2 }).notNull(),
   totalPrice: numeric("totalPrice", { precision: 12, scale: 2 }).notNull(),
   createdAt: timestamp("createdAt").notNull().defaultNow(),
+  address: json("address").$type<ShippingAddress>(),
 })

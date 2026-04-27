@@ -80,22 +80,25 @@ export const config = {
         if (trigger === "signIn" || trigger === "signUp") {
           const cookieStore = await cookies()
           const sessionCartId = cookieStore.get("sessionCartId")?.value
-          if (!sessionCartId) throw new Error("Session Cart Not Found")
-          const sessionCartExists = await db.query.carts.findFirst({
-            where: eq(carts.sessionCartId, sessionCartId),
-          })
-          if (sessionCartExists && !sessionCartExists.userId && user.id) {
-            const userCartExists = await db.query.carts.findFirst({
-              where: eq(carts.userId, user.id),
+
+          if (sessionCartId) {
+            const sessionCartExists = await db.query.carts.findFirst({
+              where: eq(carts.sessionCartId, sessionCartId),
             })
-            if (userCartExists) {
-              cookieStore.set("beforeSigninSessionCartId", sessionCartId)
-              cookieStore.set("sessionCartId", userCartExists.sessionCartId)
-            } else {
-              await db
-                .update(carts)
-                .set({ userId: user.id })
-                .where(eq(carts.id, sessionCartExists.id))
+
+            if (sessionCartExists && !sessionCartExists.userId && user.id) {
+              const userCartExists = await db.query.carts.findFirst({
+                where: eq(carts.userId, user.id),
+              })
+              if (userCartExists) {
+                cookieStore.set("beforeSigninSessionCartId", sessionCartId)
+                cookieStore.set("sessionCartId", userCartExists.sessionCartId)
+              } else {
+                await db
+                  .update(carts)
+                  .set({ userId: user.id })
+                  .where(eq(carts.id, sessionCartExists.id))
+              }
             }
           }
         }

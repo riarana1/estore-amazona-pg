@@ -1,7 +1,8 @@
 "use client"
 import Link from "next/link"
 import { useSearchParams } from "next/navigation"
-import { useFormState, useFormStatus } from "react-dom"
+import { useActionState } from "react"
+import { useFormStatus } from "react-dom"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -19,7 +20,7 @@ const SignUpButton = () => {
 }
 
 export default function SignUpForm() {
-  const [data, action] = useFormState(signUp, {
+  const [data, action] = useActionState(signUp, {
     success: false,
     message: "",
   })
@@ -84,7 +85,7 @@ export default function SignUpForm() {
           <Link
             target="_self"
             className="link"
-            href={`/sign-in?callbackUrl=${callbackUrl}`}
+            href={`/sign-in?callbackUrl=${encodeURIComponent(callbackUrl)}`}
           >
             Sign In
           </Link>

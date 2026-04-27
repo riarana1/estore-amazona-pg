@@ -1,14 +1,13 @@
 "use server"
 
 import { hashSync } from "bcrypt-ts-edge"
-import { AuthError } from "next-auth"
-
 import { signIn, signOut } from "@/auth"
 import { db } from "@/db"
 import { users } from "@/db/schema"
 import { signInFormSchema, signUpFormSchema } from "../validator"
+import { formatError } from "../utils"
 
-export async function signUp(prevState: unknown, formData: FormData) {
+export async function signUp(_prevState: unknown, formData: FormData) {
   try {
     const data = signUpFormSchema.parse({
       name: formData.get("name"),
@@ -31,15 +30,24 @@ export async function signUp(prevState: unknown, formData: FormData) {
 
     return { success: true, message: "User created successfully" }
   } catch (error) {
-    if (error instanceof AuthError) {
-      return { success: false, message: "Failed to create account" }
+    // Let redirects from signIn bubble up to Next.js
+    if ((error as { digest?: string }).digest?.includes("NEXT_REDIRECT")) {
+      throw error
     }
-    throw error
+
+    return {
+      success: false,
+      message: formatError(error).includes(
+        'duplicate key value violates unique constraint "user_email_idx"'
+      )
+        ? "Email already exists"
+        : formatError(error),
+    }
   }
 }
 
 export async function signInWithCredentials(
-  prevState: unknown,
+  _prevState: unknown,
   formData: FormData
 ) {
   try {
@@ -50,10 +58,11 @@ export async function signInWithCredentials(
     await signIn("credentials", user)
     return { success: true, message: "Sign in successfully" }
   } catch (error) {
-    if (error instanceof AuthError) {
-      return { success: false, message: "Invalid email or password" }
+    if ((error as { digest?: string }).digest?.includes("NEXT_REDIRECT")) {
+      throw error
     }
-    throw error
+
+    return { success: false, message: "Invalid email or password" }
   }
 }
 

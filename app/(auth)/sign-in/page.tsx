@@ -1,4 +1,5 @@
 import { Metadata } from "next"
+import { Suspense } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { redirect } from "next/navigation"
@@ -19,13 +20,10 @@ export const metadata: Metadata = {
   title: `Sign In - ${APP_NAME}`,
 }
 
-export default async function SignIn({
-  searchParams: { callbackUrl },
-}: {
-  searchParams: {
-    callbackUrl: string
-  }
+export default async function SignIn(props: {
+  searchParams: Promise<{ callbackUrl: string }>
 }) {
+  const { callbackUrl } = await props.searchParams
   const session = await auth()
   if (session) {
     return redirect(callbackUrl || "/")
@@ -49,7 +47,9 @@ export default async function SignIn({
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <CredentialsSignInForm />
+          <Suspense>
+            <CredentialsSignInForm />
+          </Suspense>
         </CardContent>
       </Card>
     </div>

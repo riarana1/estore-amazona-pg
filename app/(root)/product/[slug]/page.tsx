@@ -29,7 +29,7 @@ const ProductDetails = async ({
   searchParams,
 }: {
   params: Promise<{ slug: string }>
-  searchParams: Promise<{ page: string; color: string; size: string }>
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }) => {
   const { slug } = await params
   const product = await getProductBySlug(slug)

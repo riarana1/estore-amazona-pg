@@ -1,5 +1,5 @@
-import { Products } from "@/db/schema"
+import { products } from "@/db/schema"
 import { InferSelectModel } from "drizzle-orm"
 
 // PRODUCTS
-export type Product = InferSelectModel<typeof Products>
+export type Product = InferSelectModel<typeof products>

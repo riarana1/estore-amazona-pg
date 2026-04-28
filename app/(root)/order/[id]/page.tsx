@@ -1,3 +1,4 @@
+import { auth } from "@/auth"
 import OrderDetailsForm from "./order-details-form"
 import { getOrderById } from "@/lib/actions/order.actions"
 import { notFound } from "next/navigation"
@@ -11,11 +12,21 @@ const OrderDetailsPage = async ({
 }: {
   params: Promise<{ id: string }>
 }) => {
+  const session = await auth()
   const { id } = await params
   const order = await getOrderById(id)
   if (!order) notFound()
 
-  return <OrderDetailsForm order={order} />
+  const client_secret = null
+
+  return (
+    <OrderDetailsForm
+      order={order}
+      stripeClientSecret={client_secret}
+      isAdmin={session!.user.role === "admin" || false}
+      paypalClientId={process.env.PAYPAL_CLIENT_ID || "sb"}
+    />
+  )
 }
 
 export default OrderDetailsPage

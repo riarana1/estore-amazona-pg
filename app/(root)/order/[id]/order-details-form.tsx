@@ -1,7 +1,9 @@
-import { Card, CardContent } from "@/components/ui/card"
-import { formatCurrency, formatDateTime, formatId } from "@/lib/utils"
+"use client"
+
+import { PayPalButtons, PayPalScriptProvider } from "@paypal/react-paypal-js"
+
 import { Badge } from "@/components/ui/badge"
-import { Order } from "@/types"
+import { Card, CardContent } from "@/components/ui/card"
 import {
   Table,
   TableBody,
@@ -10,10 +12,26 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import Link from "next/link"
+import { toast } from "sonner"
+import { formatCurrency, formatDateTime, formatId } from "@/lib/utils"
+import { Order } from "@/types"
 import Image from "next/image"
+import Link from "next/link"
+import {
+  approvePayPalOrder,
+  createPayPalOrder,
+} from "@/lib/actions/order.actions"
+import { Button } from "@/components/ui/button"
 
-export default function OrderDetailsForm({ order }: { order: Order }) {
+export default function OrderDetailsForm({
+  order,
+  paypalClientId,
+}: {
+  order: Order
+  paypalClientId: string
+  isAdmin: boolean
+  stripeClientSecret: string | null
+}) {
   const {
     shippingAddress,
     orderItems,
@@ -27,6 +45,16 @@ export default function OrderDetailsForm({ order }: { order: Order }) {
     isDelivered,
     deliveredAt,
   } = order
+
+  const handleCreatePayPalOrder = async () => {
+    const res = await createPayPalOrder(order.id)
+    if (!res.success) return toast.error(res.message)
+    return res.data
+  }
+  const handleApprovePayPalOrder = async (data: { orderID: string }) => {
+    const res = await approvePayPalOrder(order.id, data)
+    toast[res.success ? "success" : "error"](res.message)
+  }
 
   return (
     <>
@@ -53,6 +81,16 @@ export default function OrderDetailsForm({ order }: { order: Order }) {
               <p>
                 {shippingAddress.streetAddress}, {shippingAddress.city},{" "}
                 {shippingAddress.postalCode}, {shippingAddress.country}{" "}
+              </p>
+              <p className="py-2">
+                <Button asChild variant="outline">
+                  <a
+                    target="_new"
+                    href={`https://maps.google.com?q=${shippingAddress.lat},${shippingAddress.lng}`}
+                  >
+                    Show On Map
+                  </a>
+                </Button>
               </p>
 
               {isDelivered ? (
@@ -125,6 +163,16 @@ export default function OrderDetailsForm({ order }: { order: Order }) {
                 <div>Total</div>
                 <div>{formatCurrency(totalPrice)}</div>
               </div>
+              {!isPaid && paymentMethod === "PayPal" && (
+                <div>
+                  <PayPalScriptProvider options={{ clientId: paypalClientId }}>
+                    <PayPalButtons
+                      createOrder={handleCreatePayPalOrder}
+                      onApprove={handleApprovePayPalOrder}
+                    />
+                  </PayPalScriptProvider>
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>

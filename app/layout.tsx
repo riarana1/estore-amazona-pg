@@ -1,7 +1,7 @@
 import { Geist_Mono, Inter } from "next/font/google"
 import "./globals.css"
 import React from "react"
-import { ThemeProvider } from "@/components/theme-provider"
+import { ThemeProvider } from "@/components/shared/theme-provider"
 import Header from "@/components/shared/header"
 import { cn } from "@/lib/utils"
 

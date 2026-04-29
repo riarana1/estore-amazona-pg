@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 export default async function ProfilePage() {
   const session = await auth()
   if (!session) {
-    redirect("/api/auth/signin")
+    redirect("/sign-in")
   }
   return (
     <SessionProvider session={session}>

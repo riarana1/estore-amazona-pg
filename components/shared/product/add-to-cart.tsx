@@ -1,14 +1,13 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
+
 import { addItemToCart, removeItemFromCart } from "@/lib/actions/cart.actions"
 import { Cart, CartItem } from "@/types"
-
 import { Loader, Minus, Plus } from "lucide-react"
+import { useRouter } from "next/navigation"
 import { useTransition } from "react"
 import { toast } from "sonner"
-import { round2 } from "@/lib/utils"
-import { useRouter } from "next/navigation"
 
 export default function AddToCart({
   cart,
@@ -30,11 +29,7 @@ export default function AddToCart({
         onClick={() => {
           startTransition(async () => {
             const res = await removeItemFromCart(item.productId)
-            if (res.success) {
-              toast.success(res.message)
-            } else {
-              toast.error(res.message)
-            }
+            toast.error(res.message)
             return
           })
         }}
@@ -52,15 +47,12 @@ export default function AddToCart({
         disabled={isPending}
         onClick={() => {
           startTransition(async () => {
-            const res = await addItemToCart({
-              ...item,
-              price: item.price,
-            })
-            if (res.success) {
-              toast.success(res.message)
-            } else {
-              toast.error(res.message)
-            }
+            const res = await addItemToCart(item)
+            toast(
+              res.success
+                ? toast.success(res.message)
+                : toast.error(res.message)
+            )
             return
           })
         }}
@@ -79,15 +71,12 @@ export default function AddToCart({
       disabled={isPending}
       onClick={() => {
         startTransition(async () => {
-          const res = await addItemToCart({
-            ...item,
-            price: round2(item.price),
-          })
+          const res = await addItemToCart(item)
           if (!res.success) {
             toast.error(res.message)
             return
           }
-          toast.success(`${item.name} added to the cart`, {
+          toast(`${item.name} added to the cart`, {
             action: {
               label: "Go to cart",
               onClick: () => router.push("/cart"),

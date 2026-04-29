@@ -1,10 +1,11 @@
-import { Product } from "@/types"
-
 import Image from "next/image"
 import Link from "next/link"
 
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
+import { Product } from "@/types"
 import ProductPrice from "./product-price"
+
+import { Button } from "@/components/ui/button"
 
 const ProductCard = ({ product }: { product: Product }) => {
   return (
@@ -15,32 +16,36 @@ const ProductCard = ({ product }: { product: Product }) => {
             alt={product.name}
             className="aspect-square rounded object-cover"
             height={300}
-            src={
-              product.images && product.images.length > 0
-                ? product.images[0]
-                : "/images/placeholder.jpg"
-            }
+            src={product.images![0]}
             width={300}
-            priority={true}
           />
         </Link>
       </CardHeader>
       <CardContent className="grid gap-4 p-4">
-        <div className="grid gap-1.5 text-sm leading-4">
-          <p className="text-xs leading-3">{product.brand}</p>
+        <div>
+          <p className="text-xs">{product.brand}</p>
         </div>
-        <div className="grid gap-1.5 text-sm leading-4">
+        <div>
           <Link href={`/product/${product.slug}`}>
             <h2 className="text-sm font-medium">{product.name}</h2>
           </Link>
         </div>
         <div className="flex-between gap-4">
-          <p>{product.rating} stars</p>
           {product.stock > 0 ? (
             <ProductPrice value={Number(product.price)} />
           ) : (
             <p className="text-destructive">Out of Stock</p>
           )}
+        </div>
+        <div>
+          <Link
+            href={`/quickview/product/${[product.slug]}`}
+            className="w-full"
+          >
+            <Button variant="outline" size="sm" className="flex w-full gap-2">
+              <span>Quick View</span>
+            </Button>
+          </Link>
         </div>
       </CardContent>
     </Card>

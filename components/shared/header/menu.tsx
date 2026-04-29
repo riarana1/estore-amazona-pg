@@ -1,24 +1,21 @@
-import { ShoppingCart } from "lucide-react"
+import { EllipsisVertical } from "lucide-react"
 
+import CartButton from "./cart-button"
 import UserButton from "./user-button"
-import { Button } from "@/components/ui/button"
-import Link from "next/link"
 
-const Menu = () => {
+const Menu = ({ forAdmin = false }: { forAdmin?: boolean }) => {
   return (
-    <>
-      <div className="flex justify-end gap-3">
-        <nav className="hidden w-full max-w-xs gap-1 md:flex">
-          <Button asChild variant="ghost">
-            <Link href="/cart">
-              <ShoppingCart />
-              Cart
-            </Link>
-          </Button>
-          <UserButton />
-        </nav>
-      </div>
-    </>
+    <div className="flex justify-end">
+      <nav className="hidden w-full gap-3 md:flex">
+        <UserButton />
+        {forAdmin ? null : <CartButton />}
+      </nav>
+      <nav className="md:hidden">
+        <EllipsisVertical className="h-6 w-6" />
+        <UserButton />
+        <CartButton />
+      </nav>
+    </div>
   )
 }
 

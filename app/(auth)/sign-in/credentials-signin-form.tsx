@@ -1,7 +1,6 @@
 "use client"
 import { useSearchParams } from "next/navigation"
 import { useActionState } from "react"
-import { useFormStatus } from "react-dom"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -10,17 +9,8 @@ import { signInWithCredentials } from "@/lib/actions/user.actions"
 import { signInDefaultValues } from "@/lib/constants"
 import Link from "next/link"
 
-const SignInButton = () => {
-  const { pending } = useFormStatus()
-  return (
-    <Button disabled={pending} className="w-full" variant="default">
-      {pending ? "Submitting..." : "Sign In with credentials"}
-    </Button>
-  )
-}
-
 export default function CredentialsSignInForm() {
-  const [data, action] = useActionState(signInWithCredentials, {
+  const [data, action, isPending] = useActionState(signInWithCredentials, {
     message: "",
     success: false,
   })
@@ -54,20 +44,21 @@ export default function CredentialsSignInForm() {
           />
         </div>
         <div>
-          <SignInButton />
+          <Button disabled={isPending} className="w-full" variant="default">
+            {isPending ? "Submitting..." : "Sign In"}
+          </Button>
         </div>
 
         {data && !data.success && (
           <div className="text-center text-destructive">{data.message}</div>
         )}
-        {!data && (
-          <div className="text-center text-destructive">
-            Unknown error happened.{" "}
-            <Button onClick={() => window.location.reload()}>
-              Please reload
-            </Button>
-          </div>
-        )}
+        {data &&
+          !data.success &&
+          !data.message && ( // Display generic error if action failed but no specific message
+            <div className="text-center text-destructive">
+              An unknown error occurred during sign-in. Please try again.
+            </div>
+          )}
 
         <div className="text-center text-sm text-muted-foreground">
           Don&apos;t have an account?{" "}

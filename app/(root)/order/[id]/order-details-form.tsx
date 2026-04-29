@@ -1,6 +1,6 @@
 "use client"
 
-import { useSyncExternalStore } from "react"
+import { useSyncExternalStore, useTransition } from "react"
 import {
   PayPalButtons,
   PayPalScriptProvider,
@@ -25,6 +25,8 @@ import Link from "next/link"
 import {
   approvePayPalOrder,
   createPayPalOrder,
+  deliverOrder,
+  updateOrderToPaidByCOD,
 } from "@/lib/actions/order.actions"
 import { Button } from "@/components/ui/button"
 
@@ -39,16 +41,52 @@ function PrintLoadingState() {
   return status
 }
 
+const MarkAsPaidButton = ({ order }: { order: Order }) => {
+  const [isPending, startTransition] = useTransition()
+  return (
+    <Button
+      type="button"
+      disabled={isPending}
+      onClick={() =>
+        startTransition(async () => {
+          const res = await updateOrderToPaidByCOD(order.id)
+          toast[res.success ? "success" : "error"](res.message)
+        })
+      }
+    >
+      {isPending ? "processing..." : "Mark As Paid"}
+    </Button>
+  )
+}
+
+const MarkAsDeliveredButton = ({ order }: { order: Order }) => {
+  const [isPending, startTransition] = useTransition()
+
+  return (
+    <Button
+      type="button"
+      disabled={isPending}
+      onClick={() =>
+        startTransition(async () => {
+          const res = await deliverOrder(order.id)
+          toast[res.success ? "success" : "error"](res.message)
+        })
+      }
+    >
+      {isPending ? "processing..." : "Mark As Delivered"}
+    </Button>
+  )
+}
 export default function OrderDetailsForm({
   order,
   paypalClientId,
   isAdmin,
-  stripeClientSecret,
+  //stripeClientSecret,
 }: {
   order: Order
   paypalClientId: string
   isAdmin: boolean
-  stripeClientSecret: string | null
+  //stripeClientSecret: string | null
 }) {
   // React 19 pattern to safely detect hydration without cascading renders
   // or experimental type errors.
@@ -199,6 +237,12 @@ export default function OrderDetailsForm({
                     />
                   </PayPalScriptProvider>
                 </div>
+              )}
+              {isAdmin && !isPaid && paymentMethod === "CashOnDelivery" && (
+                <MarkAsPaidButton order={order} />
+              )}
+              {isAdmin && isPaid && !isDelivered && (
+                <MarkAsDeliveredButton order={order} />
               )}
             </CardContent>
           </Card>

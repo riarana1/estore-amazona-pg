@@ -17,12 +17,12 @@ const OrderDetailsPage = async ({
   const order = await getOrderById(id)
   if (!order) notFound()
 
-  const client_secret = null
+  //const client_secret = null
 
   return (
     <OrderDetailsForm
       order={order}
-      stripeClientSecret={client_secret}
+      //stripeClientSecret={client_secret}
       isAdmin={session!.user.role === "admin" || false}
       paypalClientId={process.env.PAYPAL_CLIENT_ID || "sb"}
     />

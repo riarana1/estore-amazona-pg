@@ -1,16 +1,22 @@
-import { Geist_Mono, Inter } from "next/font/google"
+import type { Metadata } from "next"
 import "./globals.css"
+
+import { Poppins as FontSans } from "next/font/google"
+import { cn } from "@/lib/utils"
+import { Toaster } from "sonner"
 import React from "react"
 import { ThemeProvider } from "@/components/shared/theme-provider"
-import Header from "@/components/shared/header"
-import { cn } from "@/lib/utils"
+import { APP_DESCRIPTION, APP_NAME } from "@/lib/constants"
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-sans" })
-
-const fontMono = Geist_Mono({
+const fontSans = FontSans({
   subsets: ["latin"],
-  variable: "--font-mono",
+  weight: ["400", "600"],
+  variable: "--font-sans",
 })
+
+export const metadata: Metadata = {
+  title: `${APP_NAME} - ${APP_DESCRIPTION}`,
+}
 
 export default function RootLayout({
   children,
@@ -18,22 +24,21 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html
-      lang="en"
-      suppressHydrationWarning
-      className={cn(
-        "antialiased",
-        fontMono.variable,
-        "font-sans",
-        inter.variable
-      )}
-    >
-      <body>
-        <ThemeProvider>
-          <div className="flex h-screen flex-col">
-            <Header />
-            <main className="wrapper flex-1">{children}</main>
-          </div>
+    <html lang="en" suppressHydrationWarning>
+      <body
+        className={cn(
+          "min-h-screen bg-background font-sans antialiased",
+          fontSans.variable
+        )}
+      >
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          {children}
+          <Toaster position="top-right" richColors />
         </ThemeProvider>
       </body>
     </html>

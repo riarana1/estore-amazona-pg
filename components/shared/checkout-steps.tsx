@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils"
 
 const CheckoutSteps = ({ current = 0 }) => {
   return (
-    <div className="flex-between flex-col space-y-2 space-x-2 md:flex-row">
+    <div className="flex-between flex-col space-y-2 md:flex-row md:space-y-0 md:space-x-2">
       {["User Login", "Shipping Address", "Payment Method", "Place Order"].map(
         (step, index) => (
           <React.Fragment key={step}>

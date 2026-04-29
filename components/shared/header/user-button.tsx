@@ -9,6 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { SignOut } from "@/lib/actions/user.actions"
+import ModeToggle from "./mode-toggle"
 
 export default async function UserButton() {
   const session = await auth()
@@ -22,14 +23,14 @@ export default async function UserButton() {
     <div className="flex items-center gap-2">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <div className="flex items-center">
-            <Button
-              variant="ghost"
-              className="relative ml-2 h-8 w-8 rounded-full"
-            >
-              {session.user.name}
-            </Button>
-          </div>
+          <Button
+            variant="ghost"
+            className="relative ml-2 h-8 w-8 rounded-full"
+          >
+            {session.user.name
+              ? session.user.name.charAt(0).toUpperCase()
+              : "U"}
+          </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-56" align="end" forceMount>
           <DropdownMenuLabel className="font-normal">
@@ -43,16 +44,37 @@ export default async function UserButton() {
             </div>
           </DropdownMenuLabel>
 
+          <DropdownMenuItem>
+            <Link className="w-full" href="/user/profile">
+              Profile
+            </Link>
+          </DropdownMenuItem>
+
+          <DropdownMenuItem>
+            <Link className="w-full" href="/user/orders">
+              Order History
+            </Link>
+          </DropdownMenuItem>
+
+          {session.user.role === "admin" && (
+            <DropdownMenuItem>
+              <Link className="w-full" href="/admin/overview">
+                Admin
+              </Link>
+            </DropdownMenuItem>
+          )}
+
           <DropdownMenuItem className="mb-1 p-0">
             <form action={SignOut} className="w-full">
               <Button
-                className="h-4 w-full justify-start px-2 py-4"
+                className="h-auto w-full justify-start px-2 py-4"
                 variant="ghost"
               >
                 Sign Out
               </Button>
             </form>
           </DropdownMenuItem>
+          <ModeToggle />
         </DropdownMenuContent>
       </DropdownMenu>
     </div>

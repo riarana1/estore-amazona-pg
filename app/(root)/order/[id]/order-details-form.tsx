@@ -1,6 +1,11 @@
 "use client"
 
-import { PayPalButtons, PayPalScriptProvider } from "@paypal/react-paypal-js"
+import { useSyncExternalStore } from "react"
+import {
+  PayPalButtons,
+  PayPalScriptProvider,
+  usePayPalScriptReducer,
+} from "@paypal/react-paypal-js"
 
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
@@ -23,15 +28,36 @@ import {
 } from "@/lib/actions/order.actions"
 import { Button } from "@/components/ui/button"
 
+function PrintLoadingState() {
+  const [{ isPending, isRejected }] = usePayPalScriptReducer()
+  let status = ""
+  if (isPending) {
+    status = "Loading PayPal..."
+  } else if (isRejected) {
+    status = "Error in loading PayPal."
+  }
+  return status
+}
+
 export default function OrderDetailsForm({
   order,
   paypalClientId,
+  isAdmin,
+  stripeClientSecret,
 }: {
   order: Order
   paypalClientId: string
   isAdmin: boolean
   stripeClientSecret: string | null
 }) {
+  // React 19 pattern to safely detect hydration without cascading renders
+  // or experimental type errors.
+  const isMounted = useSyncExternalStore(
+    () => () => {}, // No-op subscribe
+    () => true, // Client snapshot
+    () => false // Server snapshot
+  )
+
   const {
     shippingAddress,
     orderItems,
@@ -65,7 +91,7 @@ export default function OrderDetailsForm({
             <CardContent className="gap-4 p-4">
               <h2 className="pb-4 text-xl">Payment Method</h2>
               <p>{paymentMethod}</p>
-              {isPaid ? (
+              {isMounted && isPaid ? (
                 <Badge variant="secondary">
                   Paid at {formatDateTime(paidAt!).dateTime}
                 </Badge>
@@ -93,7 +119,7 @@ export default function OrderDetailsForm({
                 </Button>
               </p>
 
-              {isDelivered ? (
+              {isMounted && isDelivered ? (
                 <Badge variant="secondary">
                   Delivered at {formatDateTime(deliveredAt!).dateTime}
                 </Badge>
@@ -149,23 +175,24 @@ export default function OrderDetailsForm({
               <h2 className="pb-4 text-xl">Order Summary</h2>
               <div className="flex justify-between">
                 <div>Items</div>
-                <div>{formatCurrency(itemsPrice)}</div>
+                <div>{isMounted ? formatCurrency(itemsPrice) : "..."}</div>
               </div>
               <div className="flex justify-between">
                 <div>Tax</div>
-                <div>{formatCurrency(taxPrice)}</div>
+                <div>{isMounted ? formatCurrency(taxPrice) : "..."}</div>
               </div>
               <div className="flex justify-between">
                 <div>Shipping</div>
-                <div>{formatCurrency(shippingPrice)}</div>
+                <div>{isMounted ? formatCurrency(shippingPrice) : "..."}</div>
               </div>
               <div className="flex justify-between">
                 <div>Total</div>
-                <div>{formatCurrency(totalPrice)}</div>
+                <div>{isMounted ? formatCurrency(totalPrice) : "..."}</div>
               </div>
-              {!isPaid && paymentMethod === "PayPal" && (
+              {!isPaid && paymentMethod === "PayPal" && isMounted && (
                 <div>
                   <PayPalScriptProvider options={{ clientId: paypalClientId }}>
+                    <PrintLoadingState />
                     <PayPalButtons
                       createOrder={handleCreatePayPalOrder}
                       onApprove={handleApprovePayPalOrder}

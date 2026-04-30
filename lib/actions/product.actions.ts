@@ -7,6 +7,43 @@ import { products } from "@/db/schema"
 import { PAGE_SIZE } from "../constants"
 import { revalidatePath } from "next/cache"
 import { formatError } from "../utils"
+import { insertProductSchema, updateProductSchema } from "../validator"
+import z from "zod"
+
+// CREATE
+export async function createProduct(data: z.infer<typeof insertProductSchema>) {
+  try {
+    const product = insertProductSchema.parse(data)
+    await db.insert(products).values(product)
+
+    revalidatePath("/admin/products")
+    return {
+      success: true,
+      message: "Product created successfully",
+    }
+  } catch (error) {
+    return { success: false, message: formatError(error) }
+  }
+}
+
+// UPDATE
+export async function updateProduct(data: z.infer<typeof updateProductSchema>) {
+  try {
+    const product = updateProductSchema.parse(data)
+    const productExists = await db.query.products.findFirst({
+      where: eq(products.id, product.id),
+    })
+    if (!productExists) throw new Error("Product not found")
+    await db.update(products).set(product).where(eq(products.id, product.id))
+    revalidatePath("/admin/products")
+    return {
+      success: true,
+      message: "Product updated successfully",
+    }
+  } catch (error) {
+    return { success: false, message: formatError(error) }
+  }
+}
 
 export async function getLatestProducts() {
   const data = await db.query.products.findMany({

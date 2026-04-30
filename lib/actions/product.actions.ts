@@ -45,6 +45,13 @@ export async function updateProduct(data: z.infer<typeof updateProductSchema>) {
   }
 }
 
+// GET
+export async function getProductById(productId: string) {
+  return await db.query.products.findFirst({
+    where: eq(products.id, productId),
+  })
+}
+
 export async function getLatestProducts() {
   const data = await db.query.products.findMany({
     orderBy: [desc(products.createdAt)],

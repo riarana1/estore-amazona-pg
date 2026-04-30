@@ -20,7 +20,7 @@ import {
 import { Product } from "@/types"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useRouter } from "next/navigation"
-import { useForm, Resolver } from "react-hook-form"
+import { useForm, Resolver, useWatch } from "react-hook-form"
 import { z } from "zod"
 import { Card, CardContent } from "@/components/ui/card"
 import Image from "next/image"
@@ -90,9 +90,9 @@ const ProductForm = ({
       }
     }
   }
-  const images = form.watch("images")
-  const isFeatured = form.watch("isFeatured")
-  const banner = form.watch("banner")
+  const images = useWatch({ control: form.control, name: "images" }) || []
+  const isFeatured = useWatch({ control: form.control, name: "isFeatured" })
+  const banner = useWatch({ control: form.control, name: "banner" })
 
   return (
     <Form {...form}>

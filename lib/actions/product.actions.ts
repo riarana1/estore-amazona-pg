@@ -143,3 +143,20 @@ export async function deleteProduct(id: string) {
     return { success: false, message: formatError(error) }
   }
 }
+
+export async function getAllCategories() {
+  const data = await db
+    .selectDistinctOn([products.category], { name: products.category })
+    .from(products)
+    .orderBy(products.category)
+  return data
+}
+
+export async function getFeaturedProducts() {
+  const data = await db.query.products.findMany({
+    where: eq(products.isFeatured, true),
+    orderBy: [desc(products.createdAt)],
+    limit: 4,
+  })
+  return data
+}

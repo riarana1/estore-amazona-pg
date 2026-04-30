@@ -38,6 +38,7 @@ export function ProductCarousel({ data }: { data: Product[] }) {
                   height="0"
                   sizes="100vw"
                   className="h-auto w-full"
+                  loading="eager"
                 />
                 <div className="absolute inset-0 flex items-end justify-center">
                   <h2 className="bg-opacity-50 bg-gray-900 px-2 text-2xl font-bold text-white">

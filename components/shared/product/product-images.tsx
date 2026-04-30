@@ -16,6 +16,7 @@ export default function ProductImages({ images }: { images: string[] }) {
         width={1000}
         height={1000}
         className="min-h-75 object-cover object-center"
+        loading="eager"
       />
       <div className="flex">
         {images.map((image, index) => (
@@ -27,7 +28,13 @@ export default function ProductImages({ images }: { images: string[] }) {
             )}
             onClick={() => setCurrent(index)}
           >
-            <Image src={image} alt={"image"} width={100} height={100} />
+            <Image
+              src={image}
+              alt={"image"}
+              width={100}
+              height={100}
+              loading="eager"
+            />
           </div>
         ))}
       </div>

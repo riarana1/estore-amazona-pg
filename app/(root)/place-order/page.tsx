@@ -90,6 +90,7 @@ export default async function PlaceOrderPage() {
                             alt={item.name}
                             width={50}
                             height={50}
+                            loading="eager"
                           ></Image>
                           <span className="px-2">{item.name}</span>
                         </Link>

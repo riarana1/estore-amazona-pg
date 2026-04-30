@@ -52,18 +52,18 @@ export async function getProductById(productId: string) {
   })
 }
 
+export async function getProductBySlug(slug: string) {
+  return await db.query.products.findFirst({
+    where: eq(products.slug, slug),
+  })
+}
+
 export async function getLatestProducts() {
   const data = await db.query.products.findMany({
     orderBy: [desc(products.createdAt)],
     limit: 4,
   })
   return data
-}
-
-export async function getProductBySlug(slug: string) {
-  return await db.query.products.findFirst({
-    where: eq(products.slug, slug),
-  })
 }
 
 export async function getAllProducts({

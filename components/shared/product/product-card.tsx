@@ -38,10 +38,7 @@ const ProductCard = ({ product }: { product: Product }) => {
           )}
         </div>
         <div>
-          <Link
-            href={`/quickview/product/${[product.slug]}`}
-            className="w-full"
-          >
+          <Link href={`/product/${product.slug}`} className="w-full">
             <Button variant="outline" size="sm" className="flex w-full gap-2">
               <span>Quick View</span>
             </Button>

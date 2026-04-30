@@ -291,6 +291,7 @@ const ProductForm = ({
                   className="h-auto w-full rounded-sm object-cover object-center"
                   width={1920}
                   height={680}
+                  loading="eager"
                 />
               )}
               {isFeatured && !banner && (

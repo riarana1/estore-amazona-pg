@@ -24,3 +24,7 @@ import { Button } from "@/components/ui/button";
 npx drizzle-kit generate
 npx drizzle-kit push
 ```
+
+```Next
+npm install next@latest --save
+```

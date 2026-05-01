@@ -29,6 +29,7 @@ import {
   updateOrderToPaidByCOD,
 } from "@/lib/actions/order.actions"
 import { Button } from "@/components/ui/button"
+import StripePayment from "./stripe-payment"
 
 function PrintLoadingState() {
   const [{ isPending, isRejected }] = usePayPalScriptReducer()
@@ -81,12 +82,12 @@ export default function OrderDetailsForm({
   order,
   paypalClientId,
   isAdmin,
-  //stripeClientSecret,
+  stripeClientSecret,
 }: {
   order: Order
   paypalClientId: string
   isAdmin: boolean
-  //stripeClientSecret: string | null
+  stripeClientSecret: string | null
 }) {
   // React 19 pattern to safely detect hydration without cascading renders
   // or experimental type errors.
@@ -238,6 +239,13 @@ export default function OrderDetailsForm({
                     />
                   </PayPalScriptProvider>
                 </div>
+              )}
+              {!isPaid && paymentMethod === 'Stripe' && stripeClientSecret && (
+                <StripePayment
+                  priceInCents={Number(order.totalPrice) * 100}
+                  orderId={order.id}
+                  clientSecret={stripeClientSecret}
+                />
               )}
               {isAdmin && !isPaid && paymentMethod === "CashOnDelivery" && (
                 <MarkAsPaidButton order={order} />

@@ -127,7 +127,7 @@ export default function ReviewList({
             Write a review
           </Button>
 
-          <DialogContent className="sm:max-w-106.25">
+          <DialogContent className="sm:max-w-106.25" >
             <Form {...form}>
               <form method="post" onSubmit={form.handleSubmit(onSubmit)}>
                 <DialogHeader>

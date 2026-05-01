@@ -77,7 +77,7 @@ const ProductPromotion = () => {
           height={200}
           src="/assets/images/p1-1.jpeg"
           loading="eager"
-          style={{ width: "auto", height: "auto" }}
+          style={{ width: "auto", height: "auto" }}          
         />
       </div>
     </section>

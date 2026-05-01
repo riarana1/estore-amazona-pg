@@ -15,26 +15,28 @@ export default async function UserButton() {
   const session = await auth()
   if (!session)
     return (
-      <Button asChild>
-        <Link href="/sign-in">Sign In</Link>
-      </Button>
+      <Link href="/api/auth/signin">
+        <Button>Sign In</Button>
+      </Link>
     )
   return (
     <div className="flex items-center gap-2">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button
-            variant="ghost"
-            className="relative ml-2 h-8 w-8 rounded-full"
-          >
-            {session.user.name?.charAt(0).toUpperCase() ?? "U"}
-          </Button>
+          <div className="flex items-center">
+            <Button
+              variant="ghost"
+              className="relative ml-2 h-8 w-8 rounded-full"
+            >
+              {session.user.name}
+            </Button>
+          </div>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-56" align="end" forceMount>
           <DropdownMenuLabel className="font-normal">
             <div className="flex flex-col space-y-1">
               <p className="text-sm leading-none font-medium">
-                {session.user.name ?? "User"}
+                {session.user.name}
               </p>
               <p className="text-xs leading-none text-muted-foreground">
                 {session.user.email}
@@ -42,14 +44,14 @@ export default async function UserButton() {
             </div>
           </DropdownMenuLabel>
 
-          <DropdownMenuItem asChild>
-            <Link href="/user/profile" className="w-full cursor-pointer">
+          <DropdownMenuItem>
+            <Link className="w-full" href="/user/profile">
               Profile
             </Link>
           </DropdownMenuItem>
 
-          <DropdownMenuItem asChild>
-            <Link href="/user/orders" className="w-full cursor-pointer">
+          <DropdownMenuItem>
+            <Link className="w-full" href="/user/orders">
               Order History
             </Link>
           </DropdownMenuItem>
